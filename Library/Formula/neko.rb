@@ -22,6 +22,13 @@ class Neko < Formula
   depends_on 'pcre'
 
   def install
+    # Skip building these modules for Yosemite (#32855)
+    inreplace "src/tools/install.neko" do |s|
+      s.sub! /mod_neko2 => {[^}]+},/, ""
+      s.sub! /mod_tora2 => {[^}]+},/, ""
+      s.sub! /ui => {.+\t},/m, ""
+    end
+
     # Build requires targets to be built in specific order
     ENV.deparallelize
     system "make", "os=osx", "LIB_PREFIX=#{HOMEBREW_PREFIX}", "INSTALL_FLAGS="
